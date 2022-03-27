@@ -1,24 +1,37 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Routes, Route } from "react-router-dom";
+import Listplanet from './component/Listplanet';
+import Detailplanet from './component/Detailplanet';
+import Wishlist from './component/Wishlist';
+import Navbar from './component/Navbar';
+import { DataResults } from './component/Data';
+import { useState } from 'react';
 
 function App() {
+  const [wish, setWish] = useState<DataResults[]>([]);
+
+  const handleTes = (data: DataResults) => {
+    const newData = [{ ...data }];
+    setWish(prev => {
+      const isWishExist = prev.find(item => item.name === data.name);
+
+      if (isWishExist) {
+        return prev.filter(item => 
+           item.name !== data.name
+        )
+      }
+
+      return [...prev, ...newData];
+    })
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Listplanet />} />
+        <Route path="/detailplanet/:id" element={<Detailplanet handle={handleTes} data={wish}/>} />
+        <Route path="/wishlist" element={<Wishlist dataWish={wish} />} />
+      </Routes>
     </div>
   );
 }
